@@ -1,98 +1,13 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { router } from 'expo-router';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, colors, Heading, Page, Tag } from '@/components/ui';
 
 export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
+  return <ScrollView contentContainerStyle={styles.content}><Page style={styles.page}>
+    <View style={styles.top}><Text style={styles.brandMark}>E6</Text><Text style={styles.brand}>FILA</Text><Tag label="GESTÃO DE ATENDIMENTO" /></View>
+    <View style={styles.hero}><Text style={styles.kicker}>ORGANIZAÇÃO QUE ACOLHE</Text><Text style={styles.title}>A fila anda.{ '\n' }O cuidado também.</Text><Text style={styles.copy}>Atendimento simples, chamadas claras e uma espera mais tranquila para todo mundo.</Text><View style={styles.status}><View style={styles.dot} /><Text style={styles.statusText}>Sistema pronto para conectar</Text></View></View>
+    <View style={styles.actions}><Button label="Entrar como atendente  →" onPress={() => router.push('/login')} /><Button label="Abrir painel público" secondary onPress={() => router.push('/public')} /><Button label="Acompanhar uma senha" secondary onPress={() => router.push('/ticket')} /></View>
+    <Card style={styles.note}><Text style={styles.noteTitle}>E6-FILA · Campus Almenara</Text><Text style={styles.noteCopy}>Painel integrado ao totem físico e ao sistema de atendimento.</Text></Card>
+  </Page></ScrollView>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
+const styles = StyleSheet.create({ content: { flexGrow: 1 }, page: { paddingTop: 26, gap: 26 }, top: { flexDirection: 'row', alignItems: 'center', gap: 8 }, brandMark: { width: 36, height: 36, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.dark, color: '#fff', textAlign: 'center', textAlignVertical: 'center', fontWeight: '900', fontSize: 13, paddingTop: 9 }, brand: { color: colors.dark, fontWeight: '900', fontSize: 18, letterSpacing: 2, flex: 1 }, hero: { backgroundColor: colors.dark, borderRadius: 26, padding: 25, minHeight: 296, justifyContent: 'center', gap: 15 }, kicker: { color: '#a7d2bc', fontSize: 10, fontWeight: '800', letterSpacing: 1.8 }, title: { color: '#fff', fontSize: 37, lineHeight: 41, fontWeight: '800', letterSpacing: -1 }, copy: { color: '#d0ddd6', fontSize: 14, lineHeight: 21, maxWidth: 300 }, status: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 7 }, dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#81ce9f' }, statusText: { color: '#b9d5c7', fontSize: 12, fontWeight: '600' }, actions: { gap: 10 }, note: { padding: 15, gap: 5 }, noteTitle: { color: colors.ink, fontSize: 12, fontWeight: '800' }, noteCopy: { color: colors.muted, fontSize: 12, lineHeight: 18 } });

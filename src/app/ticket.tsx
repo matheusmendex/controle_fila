@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, colors, Field, Heading, Page, Tag } from '@/components/ui';
+import { api, Ticket } from '@/lib/api';
+
+type TicketStatus = { senha: Ticket; pessoas_a_frente: number };
+export default function TicketScreen() {
+  const [code, setCode] = useState(''); const [result, setResult] = useState<TicketStatus | null>(null); const [busy, setBusy] = useState(false);
+  async function find() { if (!code.trim()) return; setBusy(true); try { const item = await api<TicketStatus>(`/api/tickets/${encodeURIComponent(code.trim().toUpperCase())}`); setResult(item); } catch (error) { setResult(null); Alert.alert('Senha não encontrada', error instanceof Error ? error.message : 'Confira o código e tente de novo.'); } finally { setBusy(false); } }
+  return <Page style={styles.page}><Text style={styles.brand}>E6 <Text style={{ color: colors.green }}>FILA</Text></Text><Heading eyebrow="ACOMPANHAR SENHA" title="Sua vez está a caminho." subtitle="Digite o número impresso na sua senha para ver quantas pessoas estão na sua frente." /><Field label="Código da senha" placeholder="Ex.: C-014" autoCapitalize="characters" value={code} onChangeText={setCode} onSubmitEditing={find} /><Button label={busy ? 'Consultando...' : 'Consultar posição'} onPress={find} disabled={busy} />{result && <Card style={styles.result}><Tag label={result.senha.status.toUpperCase()} /><Text style={styles.ticket}>{result.senha.codigo}</Text><View style={styles.count}><Text style={styles.countNum}>{result.pessoas_a_frente}</Text><Text style={styles.countCopy}>{result.pessoas_a_frente === 1 ? 'pessoa antes de você' : 'pessoas antes de você'}</Text></View><Text style={styles.hint}>A posição é atualizada sempre que você consultar novamente.</Text></Card>}</Page>;
+}
+const styles = StyleSheet.create({ page: { gap: 15 }, brand: { color: colors.dark, fontSize: 18, fontWeight: '900', letterSpacing: 1.5, marginBottom: 12 }, result: { alignItems: 'center', gap: 12, marginTop: 10 }, ticket: { color: colors.ink, fontSize: 44, fontWeight: '900' }, count: { alignItems: 'center', padding: 16, backgroundColor: colors.greenLight, borderRadius: 16, width: '100%' }, countNum: { color: colors.green, fontSize: 32, fontWeight: '900' }, countCopy: { color: colors.green, fontWeight: '700', fontSize: 13 }, hint: { color: colors.muted, textAlign: 'center', fontSize: 12, lineHeight: 18 } });
